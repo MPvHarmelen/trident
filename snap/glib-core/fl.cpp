@@ -1122,74 +1122,74 @@ void TFile::Copy(const TStr& SrcFNm, const TStr& DstFNm,
 
 #elif defined(GLib_LINUX)
 
-void TFile::Copy(const TStr& SrcFNm, const TStr& DstFNm,
- const bool& ThrowExceptP, const bool& FailIfExistsP){
-	int input, output;
-	size_t filesize;
-	void *source, *target;
+// void TFile::Copy(const TStr& SrcFNm, const TStr& DstFNm,
+//  const bool& ThrowExceptP, const bool& FailIfExistsP){
+// 	int input, output;
+// 	size_t filesize;
+// 	void *source, *target;
 
-	if( (input = open(SrcFNm.CStr(), O_RDONLY)) == -1) {
-		if (ThrowExceptP) {
-			TExcept::Throw(TStr::Fmt(
-			            "Error copying file '%s' to '%s': cannot open source file for reading.",
-			            SrcFNm.CStr(), DstFNm.CStr()));
-		} else {
-			return;
-		}
-	}
-
-
-	if( (output = open(DstFNm.CStr(), O_RDWR | O_CREAT | O_TRUNC, 0666)) == -1)	{
-		close(input);
-
-		if (ThrowExceptP) {
-			TExcept::Throw(TStr::Fmt(
-			            "Error copying file '%s' to '%s': cannot open destination file for writing.",
-			            SrcFNm.CStr(), DstFNm.CStr()));
-		} else {
-			return;
-		}
-	}
+// 	if( (input = open(SrcFNm.CStr(), O_RDONLY)) == -1) {
+// 		if (ThrowExceptP) {
+// 			TExcept::Throw(TStr::Fmt(
+// 			            "Error copying file '%s' to '%s': cannot open source file for reading.",
+// 			            SrcFNm.CStr(), DstFNm.CStr()));
+// 		} else {
+// 			return;
+// 		}
+// 	}
 
 
-	filesize = lseek(input, 0, SEEK_END);
-	lseek(output, filesize - 1, SEEK_SET);
-	write(output, '\0', 1);
+// 	if( (output = open(DstFNm.CStr(), O_RDWR | O_CREAT | O_TRUNC, 0666)) == -1)	{
+// 		close(input);
 
-	if((source = mmap(0, filesize, PROT_READ, MAP_SHARED, input, 0)) == (void *) -1) {
-		close(input);
-		close(output);
-		if (ThrowExceptP) {
-			TExcept::Throw(TStr::Fmt(
-						"Error copying file '%s' to '%s': cannot mmap input file.",
-						SrcFNm.CStr(), DstFNm.CStr()));
-		} else {
-			return;
-		}
-	}
+// 		if (ThrowExceptP) {
+// 			TExcept::Throw(TStr::Fmt(
+// 			            "Error copying file '%s' to '%s': cannot open destination file for writing.",
+// 			            SrcFNm.CStr(), DstFNm.CStr()));
+// 		} else {
+// 			return;
+// 		}
+// 	}
 
-	if((target = mmap(0, filesize, PROT_WRITE, MAP_SHARED, output, 0)) == (void *) -1) {
-		munmap(source, filesize);
-		close(input);
-		close(output);
-		if (ThrowExceptP) {
-			TExcept::Throw(TStr::Fmt(
-						"Error copying file '%s' to '%s': cannot mmap output file.",
-						SrcFNm.CStr(), DstFNm.CStr()));
-		} else {
-			return;
-		}
-	}
 
-	memcpy(target, source, filesize);
+// 	filesize = lseek(input, 0, SEEK_END);
+// 	lseek(output, filesize - 1, SEEK_SET);
+// 	write(output, '\0', 1);
 
-	munmap(source, filesize);
-	munmap(target, filesize);
+// 	if((source = mmap(0, filesize, PROT_READ, MAP_SHARED, input, 0)) == (void *) -1) {
+// 		close(input);
+// 		close(output);
+// 		if (ThrowExceptP) {
+// 			TExcept::Throw(TStr::Fmt(
+// 						"Error copying file '%s' to '%s': cannot mmap input file.",
+// 						SrcFNm.CStr(), DstFNm.CStr()));
+// 		} else {
+// 			return;
+// 		}
+// 	}
 
-	close(input);
-	close(output);
+// 	if((target = mmap(0, filesize, PROT_WRITE, MAP_SHARED, output, 0)) == (void *) -1) {
+// 		munmap(source, filesize);
+// 		close(input);
+// 		close(output);
+// 		if (ThrowExceptP) {
+// 			TExcept::Throw(TStr::Fmt(
+// 						"Error copying file '%s' to '%s': cannot mmap output file.",
+// 						SrcFNm.CStr(), DstFNm.CStr()));
+// 		} else {
+// 			return;
+// 		}
+// 	}
 
-}
+// 	memcpy(target, source, filesize);
+
+// 	munmap(source, filesize);
+// 	munmap(target, filesize);
+
+// 	close(input);
+// 	close(output);
+
+// }
 
 
 

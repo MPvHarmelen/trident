@@ -10,10 +10,10 @@ int std::_matherr(struct math_exception* e){
   return 1;
 }
 #elif defined(GLib_GLIBC) || defined(GLib_BSD)
-int _matherr(struct __exception* e){
-  e->retval=0;
-  return 1;
-}
+// int _matherr(struct __exception* e){
+//   e->retval=0;
+//   return 1;
+// }
 #elif defined(GLib_SOLARIS)
 int _matherr(struct __math_exception* e){
   e->retval=0;
