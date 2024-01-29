@@ -40,7 +40,7 @@
 namespace bip = boost::interprocess;
 
 struct FileSegment {
-    char block[BLOCK_SIZE];
+    char block[SB_BLOCK_SIZE];
     int memId;
 };
 

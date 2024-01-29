@@ -349,29 +349,27 @@ long Loader::parseSnapFile(string inputtriples,
 
 void Loader::createPermsAndDictsFromFiles_seq(DiskReader *reader,
         DiskLZ4Writer *writer, int id, long *output) {
-    size_t sizebuffer = 0;
-    bool gzipped = false;
-    char *buffer = reader->getfile(sizebuffer, gzipped);
+    DiskReader::Buffer buffer = reader->getfile();
     std::vector<char> uncompressedByteArray;
 
     long processedtriples = 0;
-    while (buffer != NULL) {
+    while (buffer.b != NULL) {
         //Read the file
         char *input = NULL;
         size_t sizeinput = 0;
-        if (gzipped) {
+        if (buffer.gzipped) {
             //BOOST_LOG_TRIVIAL(debug) << "Uncompressing buffer ...";
             io::filtering_ostream os;
             os.push(io::gzip_decompressor());
             os.push(io::back_inserter(uncompressedByteArray));
-            io::write(os, buffer, sizebuffer);
+            io::write(os, buffer.b, buffer.size);
             os.flush();
             input = &(uncompressedByteArray[0]);
             sizeinput = uncompressedByteArray.size();
             //BOOST_LOG_TRIVIAL(debug) << "Uncompressing buffer (done)";
         } else {
-            input = buffer;
-            sizeinput = sizebuffer;
+            input = buffer.b;
+            sizeinput = buffer.size;
         }
         if (sizeinput == 0) {
             BOOST_LOG_TRIVIAL(debug) << "This should not happen";
@@ -431,11 +429,11 @@ void Loader::createPermsAndDictsFromFiles_seq(DiskReader *reader,
             }
         }
 
-        if (gzipped) {
+        if (buffer.gzipped) {
             uncompressedByteArray.clear();
         }
         reader->releasefile(buffer);
-        buffer = reader->getfile(sizebuffer, gzipped);
+        buffer = reader->getfile();
     }
     writer->setTerminated(id);
     *output = processedtriples;
